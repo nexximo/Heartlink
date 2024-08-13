@@ -75,8 +75,8 @@ body {
 
 #heart-container .heart {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     background-image: url('hrt.gif');
     background-size: cover;
     z-index: 3;
@@ -84,8 +84,8 @@ body {
 
 #obstacle-container .obstacle {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     background-image: url('christmas-tree.png');
     background-size: cover;
     z-index: 4;
