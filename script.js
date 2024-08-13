@@ -101,8 +101,8 @@ function startGame() {
     hugCharacter.style.display = 'none';
     heartsCollected = 0;
     lives = INITIAL_LIVES;
-    scoreDisplay.innerText = `Hearts Collected: ${heartsCollected} | Lives: ${lives}`;
     velocity = { x: 0, y: 0 }; // Reset velocity
+    scoreDisplay.innerText = `Hearts Collected: ${heartsCollected} | Lives: ${lives}`;
     document.addEventListener('mousemove', moveCharacter);
     document.addEventListener('touchmove', touchMove);
     requestAnimationFrame(gameLoop);
@@ -198,11 +198,14 @@ function checkCollisions() {
               rect1.left > rect2.right ||
               rect1.bottom < rect2.top ||
               rect1.top > rect2.bottom)) {
-            lives--;
-            scoreDisplay.innerText = `Hearts Collected: ${heartsCollected} | Lives: ${lives}`;
+            // Collision detected
+            if (lives > 0) {
+                lives--; // Decrement lives only if greater than 0
+                scoreDisplay.innerText = `Hearts Collected: ${heartsCollected} | Lives: ${lives}`;
 
-            if (lives <= 0) {
-                endGame(false); // Pass false to indicate game over
+                if (lives <= 0) {
+                    endGame(false); // Pass false to indicate game over
+                }
             }
         }
     });
@@ -229,6 +232,7 @@ function endGame(success) {
 // Restart the game
 function restartGame() {
     hugCharacter.style.display = 'none';
+    velocity = { x: 0, y: 0 }; // Ensure velocity is reset
     startGame();
 }
 
