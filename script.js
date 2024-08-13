@@ -8,34 +8,86 @@ const gameContainer = document.getElementById('game-container');
 const obstacleContainer = document.getElementById('obstacle-container');
 
 const NUM_HEARTS = 10;
-const NUM_OBSTACLES = 20;
-const CHARACTER_SPEED = 1.5; // Reduced speed for better control
+const MIN_OBSTACLES = 3; // Minimum number of obstacles
+const MAX_OBSTACLES = 5; // Maximum number of obstacles
+const CHARACTER_SPEED = 1.5; // Adjusted speed for better control
+const INITIAL_LIVES = 3;
+const HEART_SIZE = 30; // Size of heart element
+const OBSTACLE_SIZE = 30; // Size of obstacle element
+const MIN_DISTANCE = 50; // Minimum distance between hearts and obstacles
 
 let heartsCollected = 0;
+let lives = INITIAL_LIVES;
 let velocity = { x: 0, y: 0 };
+let lastHeartPosition = { top: '0px', left: '0px' };
 
 // Function to create random hearts
 function createHearts() {
     heartContainer.innerHTML = '';
-    for (let i = 0; i < NUM_HEARTS; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'heart';
-        heart.style.top = `${Math.random() * (window.innerHeight - 30)}px`;
-        heart.style.left = `${Math.random() * (window.innerWidth - 30)}px`;
-        heartContainer.appendChild(heart);
+    let positions = [];
+
+    while (positions.length < NUM_HEARTS) {
+        const top = Math.random() * (window.innerHeight - HEART_SIZE) + 'px';
+        const left = Math.random() * (window.innerWidth - HEART_SIZE) + 'px';
+
+        let overlap = false;
+        for (const pos of positions) {
+            const dx = parseInt(left) - parseInt(pos.left);
+            const dy = parseInt(top) - parseInt(pos.top);
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < MIN_DISTANCE) {
+                overlap = true;
+                break;
+            }
+        }
+
+        if (!overlap) {
+            positions.push({ top, left });
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.top = top;
+            heart.style.left = left;
+            heartContainer.appendChild(heart);
+        }
     }
 }
 
 // Function to create random obstacles
 function createObstacles() {
     obstacleContainer.innerHTML = '';
-    for (let i = 0; i < NUM_OBSTACLES; i++) {
-        const obstacle = document.createElement('div');
-        obstacle.className = 'obstacle';
-        obstacle.style.top = `${Math.random() * (window.innerHeight - 30)}px`;
-        obstacle.style.left = `${Math.random() * (window.innerWidth - 30)}px`;
-        obstacleContainer.appendChild(obstacle);
+    let positions = [];
+    const numObstacles = Math.floor(Math.random() * (MAX_OBSTACLES - MIN_OBSTACLES + 1)) + MIN_OBSTACLES;
+
+    while (positions.length < numObstacles) {
+        const top = Math.random() * (window.innerHeight - OBSTACLE_SIZE) + 'px';
+        const left = Math.random() * (window.innerWidth - OBSTACLE_SIZE) + 'px';
+
+        let overlap = false;
+        for (const pos of positions) {
+            const dx = parseInt(left) - parseInt(pos.left);
+            const dy = parseInt(top) - parseInt(pos.top);
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < MIN_DISTANCE) {
+                overlap = true;
+                break;
+            }
+        }
+
+        if (!overlap && !isNearStartingPosition(left, top)) {
+            positions.push({ top, left });
+            const obstacle = document.createElement('div');
+            obstacle.className = 'obstacle';
+            obstacle.style.top = top;
+            obstacle.style.left = left;
+            obstacle.style.backgroundImage = 'url("christmas-tree.png")'; // Obstacle image
+            obstacleContainer.appendChild(obstacle);
+        }
     }
+}
+
+// Helper function to check proximity to the starting position
+function isNearStartingPosition(left, top) {
+    return Math.abs(parseInt(left)) < MIN_DISTANCE && Math.abs(parseInt(top)) < MIN_DISTANCE;
 }
 
 // Initialize game
@@ -48,7 +100,9 @@ function startGame() {
     femaleCharacter.style.display = 'block'; // Ensure female character is shown
     hugCharacter.style.display = 'none';
     heartsCollected = 0;
-    scoreDisplay.innerText = `Hearts Collected: ${heartsCollected}`;
+    lives = INITIAL_LIVES;
+    scoreDisplay.innerText = `Hearts Collected: ${heartsCollected} | Lives: ${lives}`;
+    velocity = { x: 0, y: 0 }; // Reset velocity
     document.addEventListener('mousemove', moveCharacter);
     document.addEventListener('touchmove', touchMove);
     requestAnimationFrame(gameLoop);
@@ -67,7 +121,7 @@ function moveCharacter(e) {
     velocity.y = CHARACTER_SPEED * Math.sin(angle);
 
     // Flip character based on horizontal direction
-    if (dx >= 0) {
+    if (dx < 0) { // Flip logic adjusted
         femaleCharacter.classList.add('facing-right');
         femaleCharacter.classList.remove('facing-left');
     } else {
@@ -90,7 +144,7 @@ function touchMove(e) {
     velocity.y = CHARACTER_SPEED * Math.sin(angle);
 
     // Flip character based on horizontal direction
-    if (dx >= 0) {
+    if (dx < 0) { // Flip logic adjusted
         femaleCharacter.classList.add('facing-right');
         femaleCharacter.classList.remove('facing-left');
     } else {
@@ -123,12 +177,14 @@ function checkCollisions() {
               rect1.left > rect2.right ||
               rect1.bottom < rect2.top ||
               rect1.top > rect2.bottom)) {
+            lastHeartPosition.top = heart.style.top;
+            lastHeartPosition.left = heart.style.left;
             heart.remove();
             heartsCollected++;
-            scoreDisplay.innerText = `Hearts Collected: ${heartsCollected}`;
+            scoreDisplay.innerText = `Hearts Collected: ${heartsCollected} | Lives: ${lives}`;
 
             if (heartsCollected >= NUM_HEARTS) {
-                endGame();
+                endGame(true); // Pass true to indicate success
             }
         }
     });
@@ -142,17 +198,31 @@ function checkCollisions() {
               rect1.left > rect2.right ||
               rect1.bottom < rect2.top ||
               rect1.top > rect2.bottom)) {
-            endGame(); // End game on obstacle collision
+            lives--;
+            scoreDisplay.innerText = `Hearts Collected: ${heartsCollected} | Lives: ${lives}`;
+
+            if (lives <= 0) {
+                endGame(false); // Pass false to indicate game over
+            }
         }
     });
 }
 
 // End the game
-function endGame() {
+function endGame(success) {
     document.removeEventListener('mousemove', moveCharacter);
     document.removeEventListener('touchmove', touchMove);
     femaleCharacter.style.display = 'none';
-    hugCharacter.style.display = 'block';
+
+    if (success) {
+        hugCharacter.style.display = 'block';
+        // Place hug character at the last heart position
+        hugCharacter.style.top = lastHeartPosition.top;
+        hugCharacter.style.left = lastHeartPosition.left;
+    } else {
+        hugCharacter.style.display = 'none';
+    }
+
     restartButton.style.display = 'block';
 }
 
