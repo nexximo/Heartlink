@@ -94,8 +94,8 @@ body {
 
 #obstacle-container .obstacle {
     position: absolute;
-    width: 62px;
-    height: 62px;
+    width: 47px;
+    height: 47px;
     background-image: url('christmas-tree2.gif');
     background-size: cover;
     z-index: 4;
