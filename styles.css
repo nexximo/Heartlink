@@ -56,13 +56,23 @@ body {
     z-index: 1;
 }
 
-#female-character, #hug-character {
+#female-character {
     position: absolute;
     width: 60px;
     height: 60px;
     background-size: cover;
     z-index: 2;
 }
+
+
+#hug-character {
+    position: absolute;
+    width: 68px;
+    height: 68px;
+    background-size: cover;
+    z-index: 2;
+}
+
 
 #female-character {
     background-image: url('cha2.gif');
