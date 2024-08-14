@@ -79,7 +79,7 @@ function createObstacles() {
             obstacle.className = 'obstacle';
             obstacle.style.top = top;
             obstacle.style.left = left;
-            obstacle.style.backgroundImage = 'url("christmas-tree.png")'; // Obstacle image
+            obstacle.style.backgroundImage = 'url("christmas-tree2.gif")'; // Obstacle image
             obstacleContainer.appendChild(obstacle);
         }
     }

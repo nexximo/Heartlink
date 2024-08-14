@@ -43,7 +43,7 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    background-color: #2c3e50;
+    background-color: #ffffff;
     display: none;
 }
 
@@ -58,35 +58,35 @@ body {
 
 #female-character, #hug-character {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     background-size: cover;
     z-index: 2;
 }
 
 #female-character {
-    background-image: url('cha1.gif');
+    background-image: url('cha2.gif');
 }
 
 #hug-character {
     display: none;
-    background-image: url('hug.gif');
+    background-image: url('hug2.gif');
 }
 
 #heart-container .heart {
     position: absolute;
-    width: 32px;
-    height: 32px;
-    background-image: url('hrt.gif');
+    width: 25px;
+    height: 40px;
+    background-image: url('hrt2.gif');
     background-size: cover;
     z-index: 3;
 }
 
 #obstacle-container .obstacle {
     position: absolute;
-    width: 32px;
-    height: 32px;
-    background-image: url('christmas-tree.png');
+    width: 62px;
+    height: 62px;
+    background-image: url('christmas-tree2.gif');
     background-size: cover;
     z-index: 4;
 }
@@ -95,7 +95,7 @@ body {
     position: absolute;
     top: 10px;
     left: 10px;
-    color: #ecf0f1;
+    color: #092127;
     font-size: 1.2em;
     z-index: 5;
 }
