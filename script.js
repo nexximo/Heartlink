@@ -117,6 +117,7 @@ function moveCharacter(e) {
     const dy = targetY - (femaleCharacter.offsetTop + femaleCharacter.offsetHeight / 2);
     const angle = Math.atan2(dy, dx);
 
+    // Use CHARACTER_SPEED to control velocity
     velocity.x = CHARACTER_SPEED * Math.cos(angle);
     velocity.y = CHARACTER_SPEED * Math.sin(angle);
 
@@ -140,6 +141,7 @@ function touchMove(e) {
     const dy = targetY - (femaleCharacter.offsetTop + femaleCharacter.offsetHeight / 2);
     const angle = Math.atan2(dy, dx);
 
+    // Use CHARACTER_SPEED to control velocity
     velocity.x = CHARACTER_SPEED * Math.cos(angle);
     velocity.y = CHARACTER_SPEED * Math.sin(angle);
 
